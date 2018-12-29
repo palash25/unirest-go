@@ -1,31 +1,54 @@
 package unirest
 
 type UnirestClient struct {
-	timeout int
-	userAgent string
+	timeout        int
+	userAgent      string
 	defaultHeaders map[string]string
 }
 
-func NewClient(opts ) (*UnirestClient, error) {
-
+func NewClient() *UnirestClient {
+	return &UnirestClient{
+		timeout:   10,
+		userAgent: "unirest-go/1.0",
+	}
 }
 
-func (c *UnirestClient) func Get(url string, headers map[string]interface{}, body interface{}, auth[string]string) (*Response, error) {
-
+func (c *UnirestClient) Get(url string, headers map[string]interface{}, body interface{}, auth [string]string) (*Response, error) {
+	r := NewRequest("GET", url, headers, body, auth)
+	r.Do()
 }
 
-func (c *UnirestClient) func Post(url string, headers map[string]interface{}, body interface{}, auth[string]string) (*Response, error) {
-
+func (c *UnirestClient) Post(url string, headers map[string]interface{}, body interface{}, auth [string]string) (*Response, error) {
+	r := NewRequest("GET", url, headers, body, auth)
+	r.Do()
 }
 
-func (c *UnirestClient) func Put(url string, headers map[string]interface{}, body interface{}, auth[string]string) (*Response, error) {
-
+func (c *UnirestClient) Put(url string, headers map[string]interface{}, body interface{}, auth [string]string) (*Response, error) {
+	r := NewRequest("GET", url, headers, body, auth)
+	r.Do()
 }
 
-func (c *UnirestClient) func Delete(url string, headers map[string]interface{}, body interface{}, auth[string]string) (*Response, error) {
-
+func (c *UnirestClient) Delete(url string, headers map[string]interface{}, body interface{}, auth [string]string) (*Response, error) {
+	r := NewRequest("GET", url, headers, body, auth)
+	r.Do()
 }
 
-func (c *UnirestClient) func Patch(url string, headers map[string]interface{}, body interface{}, auth[string]string) (*Response, error) {
+func (c *UnirestClient) Patch(url string, headers map[string]interface{}, body interface{}, auth [string]string) (*Response, error) {
+	r := NewRequest("GET", url, headers, body, auth)
+	r.Do()
+}
 
+func (c *UnirestClient) SetTimeout(timeout int) *UnirestClient {
+	c.timeout = timeout
+	return c
+}
+
+func (c *UnirestClient) SetUserAgent(agent string) *UnirestClient {
+	c.userAgent = agent
+	return c
+}
+
+func (c *UnirestClient) SetDefaultHeader(key, value string) *UnirestClient {
+	c.defaultHeaders[key] = value
+	return c
 }
