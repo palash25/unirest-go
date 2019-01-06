@@ -33,20 +33,26 @@ func iterateParams(params map[string]interface{}) url.Values {
 	return values
 }
 
-func (r *Request) rawEncode() string {
+func (r *Request) rawEncode() *Request {
 	var _url *url.URL
 	_url, _ = url.Parse(r.url)
 
 	values := iterateParams(r.body.(map[string]interface{}))
 	_url.RawQuery = values.Encode()
 
-	return _url.String()
+	r.url = _url.String()
+	return r
 }
 
-func (r *Request) formEncode() *strings.Reader {
+func (r *Request) formEncode() (*Request, error) {
 	form := iterateParams(r.body.(map[string]interface{}))
 	r.headers.Set("Content-Type", "application/x-www-form-urlencoded")
-	return strings.NewReader(form.Encode())
+	req, err := http.NewRequest("POST", r.url, strings.NewReader(form.Encode()))
+	if err != nil {
+		return nil, err
+	}
+	r.HTTPRequest = req
+	return r, nil
 }
 
 func (r *Request) multiPartFormEncode(paramName, path string, params map[string]interface{}) (*Request, error) {
