@@ -14,17 +14,17 @@ type Request struct {
 	body        interface{}
 	auth        map[string]string
 	HTTPRequest *http.Request
+	HTTPClient  *http.Client
 }
 
 // NewRequest is a constructor that initializes the Request struct.
 func NewRequest(method, url string, headers map[string]interface{}, body interface{}, auth map[string]string) *Request {
 	uniReq := Request{
-		method:      method,
-		url:         url,
-		headers:     headers,
-		body:        body,
-		auth:        auth,
-		HTTPRequest: nil,
+		method:  method,
+		url:     url,
+		headers: headers,
+		body:    body,
+		auth:    auth,
 	}
 	return &uniReq
 }
