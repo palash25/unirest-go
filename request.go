@@ -47,7 +47,9 @@ func (r *Request) Do() {
 				r.multiPartFormEncode(key, value.(string), bodyMap)
 			}
 		}
-		r.formEncode()
+		if r.HTTPRequest != nil {
+			r.formEncode()
+		}
 	}
 
 	// Setting headers received from the user to the
