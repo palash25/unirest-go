@@ -33,32 +33,35 @@ func iterateParams(params map[string]interface{}) url.Values {
 	return values
 }
 
-func (r *Request) rawEncode() *Request {
+func (r *Request) rawEncode() error {
 	var _url *url.URL
-	_url, _ = url.Parse(r.url)
+	_url, err := url.Parse(r.url)
+	if err != nil {
+		return err
+	}
 
 	values := iterateParams(r.body.(map[string]interface{}))
 	_url.RawQuery = values.Encode()
 
 	r.url = _url.String()
-	return r
+	return nil
 }
 
-func (r *Request) formEncode() (*Request, error) {
+func (r *Request) formEncode() error {
 	form := iterateParams(r.body.(map[string]interface{}))
 	r.HTTPRequest.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	req, err := http.NewRequest(r.method, r.url, strings.NewReader(form.Encode()))
 	if err != nil {
-		return nil, err
+		return err
 	}
 	r.HTTPRequest = req
-	return r, nil
+	return nil
 }
 
-func (r *Request) multiPartFormEncode(paramName, path string, params map[string]interface{}) (*Request, error) {
+func (r *Request) multiPartFormEncode(paramName, path string, params map[string]interface{}) error {
 	file, err := os.Open(path)
 	if err != nil {
-		return nil, err
+		return err
 	}
 	defer file.Close()
 
@@ -66,7 +69,7 @@ func (r *Request) multiPartFormEncode(paramName, path string, params map[string]
 	writer := multipart.NewWriter(body)
 	part, err := writer.CreateFormFile(paramName, filepath.Base(path))
 	if err != nil {
-		return nil, err
+		return err
 	}
 	_, err = io.Copy(part, file)
 
@@ -75,17 +78,17 @@ func (r *Request) multiPartFormEncode(paramName, path string, params map[string]
 	}
 	err = writer.Close()
 	if err != nil {
-		return nil, err
+		return err
 	}
 
 	req, err := http.NewRequest(r.method, r.url, body)
 	if err != nil {
-		return nil, err
+		return err
 	}
 	r.HTTPRequest = req
 	r.HTTPRequest.Header.Set("Content-Type", writer.FormDataContentType())
 
-	return r, nil
+	return nil
 }
 
 func toString(value reflect.Value, valType string) string {
