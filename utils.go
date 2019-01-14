@@ -24,7 +24,7 @@ func iterateParams(params map[string]interface{}) url.Values {
 	for k, v := range params {
 		valType = reflect.TypeOf(v).Kind().String()
 		if valType != "string" {
-			str := toString(reflect.ValueOf(v), valType)
+			str := ToString(reflect.ValueOf(v), valType)
 			values.Add(k, str)
 		} else {
 			values.Add(k, v.(string))
@@ -40,21 +40,31 @@ func (r *Request) rawEncode() error {
 		return err
 	}
 
-	values := iterateParams(r.body.(map[string]interface{}))
-	_url.RawQuery = values.Encode()
+	if r.body != nil {
+		values := iterateParams(r.body.(map[string]interface{}))
+		_url.RawQuery = values.Encode()
+	}
 
 	r.url = _url.String()
+
+	r.HTTPRequest, err = http.NewRequest("GET", r.url, nil)
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 
 func (r *Request) formEncode() error {
 	form := iterateParams(r.body.(map[string]interface{}))
-	r.HTTPRequest.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	req, err := http.NewRequest(r.method, r.url, strings.NewReader(form.Encode()))
 	if err != nil {
 		return err
 	}
+
 	r.HTTPRequest = req
+	r.HTTPRequest.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+
 	return nil
 }
 
@@ -85,13 +95,15 @@ func (r *Request) multiPartFormEncode(paramName, path string, params map[string]
 	if err != nil {
 		return err
 	}
+
 	r.HTTPRequest = req
 	r.HTTPRequest.Header.Set("Content-Type", writer.FormDataContentType())
 
 	return nil
 }
 
-func toString(value reflect.Value, valType string) string {
+// This function is copied from the repository https://github.com/apimatic/unirest-go
+func ToString(value reflect.Value, valType string) string {
 	switch valType {
 	case "bool":
 		return strconv.FormatBool(value.Bool())
