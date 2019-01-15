@@ -37,9 +37,9 @@ func NewRequest(method, url string, headers map[string]interface{}, body interfa
 	return &uniReq
 }
 
-// Do performs the actual HTTP request after encoding the params and setting
+// MakeRequest performs the actual HTTP request after encoding the params and setting
 // the required request headers.
-func (r *Request) Do() {
+func (r *Request) MakeRequest() {
 	// In case of GET request the params are encoded into
 	// url otherwise we use form-encoded params or multipart
 	// form-encoded based on whether the params contain a file
@@ -78,14 +78,12 @@ func (r *Request) Do() {
 		r.HTTPRequest.Header.Set("Authorization", str)
 	}
 
-	fmt.Println(r.HTTPRequest, r.HTTPRequest.Body)
-	/*resp, err := r.HTTPClient.Do(r.HTTPRequest)
+	resp, err := r.HTTPClient.Do(r.HTTPRequest)
 
-	//defer resp.Body.Close()
 	if err != nil {
 		fmt.Println("ERROR IS: ", err)
 	}
 
-	fmt.Println(resp, "\n", err, "\n", r.url, "\n", r.HTTPRequest.Header, "\n", r.HTTPRequest)
-	fmt.Print("\n\n\n")*/
+	defer resp.Body.Close()
+	fmt.Println(resp)
 }
