@@ -10,8 +10,9 @@ type UnirestClient struct {
 // NewClient is a constructor that initializes unirest client.
 func NewClient() *UnirestClient {
 	return &UnirestClient{
-		timeout:   10,
-		userAgent: "unirest-go/1.0",
+		timeout:        10,
+		userAgent:      "unirest-go/1.0",
+		defaultHeaders: make(map[string]string),
 	}
 }
 
@@ -50,19 +51,14 @@ func (c *UnirestClient) Patch(url string, headers map[string]interface{}, body i
 	return nil, nil
 }
 
-/*
-func (c *UnirestClient) SetTimeout(timeout int) *UnirestClient {
+func (c *UnirestClient) SetTimeout(timeout int) {
 	c.timeout = timeout
-	return c
 }
 
-func (c *UnirestClient) SetUserAgent(agent string) *UnirestClient {
+func (c *UnirestClient) SetUserAgent(agent string) {
 	c.userAgent = agent
-	return c
 }
 
-func (c *UnirestClient) SetDefaultHeader(key, value string) *UnirestClient {
+func (c *UnirestClient) SetDefaultHeader(key, value string) {
 	c.defaultHeaders[key] = value
-	return c
 }
-*/
