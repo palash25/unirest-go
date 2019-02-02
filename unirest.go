@@ -1,7 +1,6 @@
 package unirest
 
 import (
-	"net/http"
 	"sync"
 )
 
@@ -73,12 +72,13 @@ func (uc *UnirestClient) ClearDefaultHeader() {
 	uc.DefaultHeaders = make(map[string]string)
 }
 
-// Do performs synchronous requests
-func (r *Request) Do() (*http.Response, error) {
-	resp, err := r.HTTPClient.Do(r.HTTPRequest)
+// Do performs the requests
+func (r *Request) Do() (*Response, error) {
+	res, err := r.HTTPClient.Do(r.HTTPRequest)
 	if err != nil {
 		return nil, err
 	}
+	resp := NewResponse(res)
 	return resp, nil
 }
 
@@ -89,16 +89,16 @@ func (uc *UnirestClient) DoAsync() {
 
 	for req := range uc.InChan {
 		wg.Add(1)
-		go func() {
+		go func(r *Request) {
 			defer wg.Done()
-			res, err := req.HTTPClient.Do(req.HTTPRequest)
+			resp, err := r.Do()
 			//resp := NewResponse(res)
 			asyncResp := &AsyncRequest{
-				Resp: res,
+				Resp: resp,
 				Err:  err,
 			}
 			uc.OutChan <- asyncResp
-		}()
+		}(req)
 	}
 
 	go func() {
