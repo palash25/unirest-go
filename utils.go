@@ -68,6 +68,7 @@ func (r *Request) formEncode() error {
 	return nil
 }
 
+// https://matt.aimonetti.net/posts/2013/07/01/golang-multipart-file-upload-example/
 func (r *Request) multiPartFormEncode(paramName, path string, params map[string]interface{}) error {
 	file, err := os.Open(path)
 	if err != nil {
@@ -102,6 +103,7 @@ func (r *Request) multiPartFormEncode(paramName, path string, params map[string]
 	return nil
 }
 
+// ToString converts a form value to a string type
 // This function is copied from the repository https://github.com/apimatic/unirest-go
 func ToString(value reflect.Value, valType string) string {
 	switch valType {
