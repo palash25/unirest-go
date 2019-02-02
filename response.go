@@ -5,7 +5,7 @@ import (
 	"net/http"
 )
 
-// Response struct for the unirest protocol
+// Response struct for the unirest protocol.
 type Response struct {
 	Code    int
 	Body    string
@@ -13,18 +13,21 @@ type Response struct {
 	Headers map[string][]string
 }
 
-// NewResponse initializes and returns a unirest response struct or an error if any
-func NewResponse(resp *http.Response) (*Response, error) {
-	responseData, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return nil, err
-	}
+// AsyncRequest is used for returning responses of asynchronous requests
+// through channels.
+type AsyncRequest struct {
+	Resp *http.Response
+	Err  error
+}
 
+// NewResponse initializes and returns a unirest response struct or an error if any
+func NewResponse(resp *http.Response) *Response {
+	responseData, _ := ioutil.ReadAll(resp.Body)
 	unirestRespose := &Response{
 		Code:    resp.StatusCode,
 		Body:    string(responseData),
 		RawBody: string(responseData),
 		Headers: resp.Header,
 	}
-	return unirestRespose, nil
+	return unirestRespose
 }
