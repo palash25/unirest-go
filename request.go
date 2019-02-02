@@ -2,7 +2,6 @@ package unirest
 
 import (
 	"encoding/base64"
-	"fmt"
 	"net/http"
 	"reflect"
 	"strings"
@@ -37,9 +36,9 @@ func NewRequest(method, url string, headers map[string]interface{}, body interfa
 	return &uniReq
 }
 
-// MakeRequest performs the actual HTTP request after encoding the params and setting
+// BuildRequest performs the actual HTTP request after encoding the params and setting
 // the required request headers.
-func (r *Request) MakeRequest() {
+func (r *Request) BuildRequest(uc *UnirestClient) *Request {
 	// In case of GET request the params are encoded into
 	// url otherwise we use form-encoded params or multipart
 	// form-encoded based on whether the params contain a file
@@ -60,6 +59,8 @@ func (r *Request) MakeRequest() {
 		}
 	}
 
+	r.HTTPRequest.Header.Set("user-agent", uc.UserAgent)
+	r.HTTPRequest.Header.Set("accept-encoding", "gzip")
 	// Setting headers received from the user to the
 	// actual `Header` struct defined in the `net/http` package
 	var vType string
@@ -78,12 +79,5 @@ func (r *Request) MakeRequest() {
 		r.HTTPRequest.Header.Set("Authorization", str)
 	}
 
-	resp, err := r.HTTPClient.Do(r.HTTPRequest)
-
-	if err != nil {
-		fmt.Println("ERROR IS: ", err)
-	}
-
-	defer resp.Body.Close()
-	fmt.Println(resp)
+	return r
 }
