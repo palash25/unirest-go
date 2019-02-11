@@ -92,7 +92,6 @@ func (uc *UnirestClient) DoAsync() {
 		go func(r *Request) {
 			defer wg.Done()
 			resp, err := r.Do()
-			//resp := NewResponse(res)
 			asyncResp := &AsyncRequest{
 				Resp: resp,
 				Err:  err,
