@@ -8,7 +8,7 @@ import (
 // Response struct for the unirest protocol.
 type Response struct {
 	Code    int
-	Body    string
+	RawBody string
 	Headers map[string][]string
 }
 
@@ -25,7 +25,7 @@ func NewResponse(resp *http.Response) *Response {
 
 	unirestRespose := &Response{
 		Code:    resp.StatusCode,
-		Body:    string(responseData),
+		RawBody: string(responseData),
 		Headers: resp.Header,
 	}
 	return unirestRespose
