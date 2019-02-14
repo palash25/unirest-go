@@ -14,8 +14,8 @@ type Request struct {
 	headers     map[string]interface{}
 	body        interface{}
 	auth        map[string]string
-	HTTPRequest *http.Request
-	HTTPClient  *http.Client
+	httpRequest *http.Request
+	httpClient  *http.Client
 }
 
 // NewRequest is a constructor that initializes the Request struct.
@@ -26,10 +26,10 @@ func NewRequest(method, url string, headers map[string]interface{}, body interfa
 		headers: headers,
 		body:    body,
 		auth:    auth,
-		HTTPClient: &http.Client{
+		httpClient: &http.Client{
 			Transport: nil,
 		},
-		HTTPRequest: &http.Request{
+		httpRequest: &http.Request{
 			Proto: "HTTP/1.0",
 		},
 	}
@@ -54,13 +54,13 @@ func (r *Request) BuildRequest(uc *UnirestClient) *Request {
 				break
 			}
 		}
-		if r.HTTPRequest != nil {
+		if r.httpRequest != nil {
 			r.formEncode()
 		}
 	}
 
-	r.HTTPRequest.Header.Set("user-agent", uc.UserAgent)
-	r.HTTPRequest.Header.Set("accept-encoding", "gzip")
+	r.httpRequest.Header.Set("user-agent", uc.UserAgent)
+	r.httpRequest.Header.Set("accept-encoding", "gzip")
 	// Setting headers received from the user to the
 	// actual `Header` struct defined in the `net/http` package
 	var vType string
@@ -69,14 +69,14 @@ func (r *Request) BuildRequest(uc *UnirestClient) *Request {
 		if vType != "string" {
 			v = ToString(reflect.ValueOf(v), vType)
 		}
-		r.HTTPRequest.Header.Set(strings.ToLower(k), v.(string))
+		r.httpRequest.Header.Set(strings.ToLower(k), v.(string))
 	}
 
 	// Set basic auth header
 	if r.auth != nil {
 		data := []byte(r.auth["user"] + ":" + r.auth["password"])
 		str := "Basic " + base64.StdEncoding.EncodeToString(data)
-		r.HTTPRequest.Header.Set("Authorization", str)
+		r.httpRequest.Header.Set("Authorization", str)
 	}
 
 	return r
