@@ -74,7 +74,7 @@ func (uc *UnirestClient) ClearDefaultHeader() {
 
 // Do performs the requests
 func (r *Request) Do() (*Response, error) {
-	res, err := r.HTTPClient.Do(r.HTTPRequest)
+	res, err := r.httpClient.Do(r.httpRequest)
 	if err != nil {
 		return nil, err
 	}
