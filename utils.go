@@ -47,7 +47,7 @@ func (r *Request) rawEncode() error {
 
 	r.url = _url.String()
 
-	r.HTTPRequest, err = http.NewRequest("GET", r.url, nil)
+	r.httpRequest, err = http.NewRequest("GET", r.url, nil)
 	if err != nil {
 		return err
 	}
@@ -62,8 +62,8 @@ func (r *Request) formEncode() error {
 		return err
 	}
 
-	r.HTTPRequest = req
-	r.HTTPRequest.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	r.httpRequest = req
+	r.httpRequest.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 
 	return nil
 }
@@ -97,8 +97,8 @@ func (r *Request) multiPartFormEncode(paramName, path string, params map[string]
 		return err
 	}
 
-	r.HTTPRequest = req
-	r.HTTPRequest.Header.Set("Content-Type", writer.FormDataContentType())
+	r.httpRequest = req
+	r.httpRequest.Header.Set("Content-Type", writer.FormDataContentType())
 
 	return nil
 }
